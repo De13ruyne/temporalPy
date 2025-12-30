@@ -13,8 +13,8 @@ This project demonstrates a **Python-based simple Temporal workflow** for job pr
 ### 2.1 Clone the repository
 
 ```
-git clone <your-repo-url>
-cd <project-directory>
+git clone git@github.com:De13ruyne/temporalPy.git
+cd temporalPy
 ```
 
 ### 2.2 Build and start all services using Docker Compose
