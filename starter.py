@@ -2,9 +2,10 @@ import asyncio
 import uuid
 from temporalio.client import Client
 from common import InputJson
+from common import TEMPORAL_HOST
 
 async def start_job(input: InputJson):
-    client = await Client.connect("localhost:7233")
+    client = await Client.connect(TEMPORAL_HOST)
 
     # 生成唯一的工作流 ID
     id = f"say-hello-workflow-{uuid.uuid4()}"

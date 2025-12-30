@@ -1,11 +1,12 @@
 from temporalio.client import Client
 from common import OutputJson
+from common import TEMPORAL_HOST
 
 # 通过传入 job_id 查询工作流状态
 # 返回 OutputJson 数据结构
 async def query_job(job_id: str):
     # 获取客户端
-    client = await Client.connect("localhost:7233")
+    client = await Client.connect(TEMPORAL_HOST)
     
     # 获取句柄
     handle = client.get_workflow_handle(job_id)

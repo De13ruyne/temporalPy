@@ -1,0 +1,48 @@
+version: '3.8'
+
+# 自定义网络：所有服务加入同一网络，容器间用「服务名」互通
+networks:
+  temporal-network:
+    driver: bridge
+
+services:
+  # ========== 1. Temporal Server 服务 ==========
+  temporal-server:
+    image: temporalio/temporal:latest
+    command: ["server", "start-dev", "--ip", "0.0.0.0"]
+    ports:
+      - "7233:7233"
+      - "8080:8080"
+      - "8233:8233"
+    networks:
+      - temporal-network 
+
+  # ========== 2. Temporal Worker 服务 ==========
+  temporal-worker:
+    build: .  # 基于当前目录的Dockerfile构建镜像
+    container_name: temporal-worker
+    command: ["python3", "worker.py"]  # 启动Worker命令
+    depends_on:
+      - temporal-server
+
+    networks:
+      - temporal-network
+    restart: always  # 常驻服务，异常自动重启
+    environment:
+      - TEMPORAL_HOST=temporal-server:7233  # 关键：指向Temporal Server服务名
+
+  # ========== 3. FastAPI API 接口服务 ==========
+  fastapi-api:
+    build: .  # 复用Worker的镜像（无需重复构建）
+    container_name: fastapi-api
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]  # 启动API服务
+    ports:
+      - "8000:8000"  # 映射到本地8000端口，对外提供接口
+    depends_on:
+      - temporal-server
+
+    networks:
+      - temporal-network
+    restart: always
+    environment:
+      - TEMPORAL_HOST=temporal-server:7233  # 关键：指向Temporal Server服务名

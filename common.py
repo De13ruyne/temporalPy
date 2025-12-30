@@ -1,6 +1,9 @@
 # common.py 【数据定义处，全局所有模块都从这里导入】
 from dataclasses import dataclass
 
+# Temporal 服务器地址
+TEMPORAL_HOST = "temporal-server:7233"
+
 # Activity 参数定义
 @dataclass
 class ActParams:
